@@ -86,7 +86,8 @@ public class Summon : MonoBehaviour
             {
                 behaviourMode = "FOLLOW";
             }
-            print("attacking");
+            transform.LookAt(new Vector3(aggroZone.gameObject.GetComponent<aggroRange>().target.transform.position.x, transform.position.y, aggroZone.gameObject.GetComponent<aggroRange>().target.transform.position.z));
+
             Vector3 direction = aggroZone.gameObject.GetComponent<aggroRange>().target.transform.position - transform.position;
             c.Move (direction.normalized * (speed * Time.deltaTime));
             
@@ -100,7 +101,7 @@ public class Summon : MonoBehaviour
         if (inZone)
         {
             transform.LookAt(new Vector3(lookAtPoint.position.x, transform.position.y, lookAtPoint.position.z));
-            print("hello");
+            
 
 
         }

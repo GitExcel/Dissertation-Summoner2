@@ -42,7 +42,7 @@ public class aggroRange : MonoBehaviour
     {
         if (other.gameObject.tag == "BADGUY")
         {
-            print("badguy");
+            
             badGuyInRange.Add(other.gameObject);
         }
     }

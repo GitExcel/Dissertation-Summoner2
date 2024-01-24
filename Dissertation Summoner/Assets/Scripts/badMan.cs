@@ -19,7 +19,7 @@ public class badMan : MonoBehaviour
     {
         if (other.tag == "Summon")
         {
-            print("okay i die now");
+            
             Destroy(this.gameObject);
         }
     }
