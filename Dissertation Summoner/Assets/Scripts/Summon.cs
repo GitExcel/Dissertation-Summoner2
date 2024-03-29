@@ -24,23 +24,57 @@ public class Summon : MonoBehaviour
     public GameObject point;
     public int pointNum;
     public GameObject aggroZone;
+    public GameObject aggroZone2;
+    public GameObject playerCommands;
+    public float damage = 10f;
+    public string element = "NONE";
+    public GameObject attackBox;
+    private bool attackOnCooldown = false;
+
+    public float baseDamage;
+    public float baseSpeed;
+    public string baseElement;
+
+
+    Animator animator;
+    private string animatorState;
+
     // Start is called before the first frame update
     void Start()
     {
         behaviourMode = "FOLLOW";
         c = GetComponent<CharacterController>();
+        baseElement = element;
+        baseDamage = damage;
+        baseSpeed = speed;
         
     }
     private void Awake()
     {
+        player = GameObject.Find("PlayerArmature").gameObject;
+        lookAtPoint = player.transform.Find("LookatPoint").transform;
+        aggroZone = GameObject.Find("aggroCube").gameObject;
+        animator = GetComponent<Animator>();
         pointNum = player.gameObject.GetComponent<pointScript>().amountOfPoints;
         point = player.gameObject.GetComponent<pointScript>().points[player.gameObject.GetComponent<pointScript>().amountOfPoints];
         player.gameObject.GetComponent<pointScript>().amountOfPoints += 1;
+        player.gameObject.GetComponent<playerCommands>().summons.Add(this.gameObject);
+        
     }
     private void OnDestroy()
     {
         player.gameObject.GetComponent<pointScript>().amountOfPoints -= 1;
 
+    }
+
+
+    IEnumerator attackTimer()
+    {
+        print("it be starting");
+        yield return new WaitForSeconds(3f);
+        attackBox.GetComponent<attackBox>().targetIn = false;
+        attackOnCooldown = false;
+        print("it be done");
     }
 
     // Update is called once per frame
@@ -52,6 +86,7 @@ public class Summon : MonoBehaviour
         }
         else if (behaviourMode == "ATTACK") 
         {
+            animator.SetBool("isIdle", false);
             summonAttack();
         }
 
@@ -60,8 +95,9 @@ public class Summon : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        if (aggroZone.gameObject.GetComponent<aggroRange>().badGuyInRange.Count >= 1)
+        if (aggroZone2.gameObject.GetComponent<aggroRange2>().target != null)
         {
+            animatorState = "ATTACK";
             behaviourMode = "ATTACK";
         }
 
@@ -71,25 +107,45 @@ public class Summon : MonoBehaviour
         
         
         
+        
     }
 
     private void summonAttack()
     {
-        if (aggroZone.gameObject.GetComponent<aggroRange>().badGuyInRange.Count == 0)
+        if (aggroZone2.gameObject.GetComponent<aggroRange2>().target == null)
         {
+            animatorState = "FOLLOW";
             behaviourMode = "FOLLOW";
             
         }
         else
         {
-            if (aggroZone.gameObject.GetComponent<aggroRange>().target == null)
+            if (aggroZone2.gameObject.GetComponent<aggroRange2>().target == null)
             {
                 behaviourMode = "FOLLOW";
             }
-            transform.LookAt(new Vector3(aggroZone.gameObject.GetComponent<aggroRange>().target.transform.position.x, transform.position.y, aggroZone.gameObject.GetComponent<aggroRange>().target.transform.position.z));
+            
+            if (attackBox.GetComponent<attackBox>().targetIn && attackOnCooldown == false )
+            {
+                print("attacked");
+                animator.SetTrigger("triggerAttack");
+                attackOnCooldown = true;
+                aggroZone2.gameObject.GetComponent<aggroRange2>().target.gameObject.GetComponent<badMan>().health -= damage;
+                print(aggroZone2.gameObject.GetComponent<aggroRange2>().target.gameObject.GetComponent<badMan>().health);
+                StartCoroutine(attackTimer());
 
-            Vector3 direction = aggroZone.gameObject.GetComponent<aggroRange>().target.transform.position - transform.position;
-            c.Move (direction.normalized * (speed * Time.deltaTime));
+
+                
+
+
+            }
+            else
+            {
+                transform.LookAt(new Vector3(aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position.x, transform.position.y, aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position.z));
+                Vector3 direction = aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position - transform.position;
+                c.Move(direction.normalized * (speed * Time.deltaTime));
+
+            }
             
 
         }
@@ -100,6 +156,7 @@ public class Summon : MonoBehaviour
     {
         if (inZone)
         {
+            animator.SetBool("isIdle", true);
             transform.LookAt(new Vector3(lookAtPoint.position.x, transform.position.y, lookAtPoint.position.z));
             
 
@@ -107,8 +164,9 @@ public class Summon : MonoBehaviour
         }
         else
         {
-            
-            
+            animator.SetBool("isIdle", false);
+
+
             Vector3 direction = point.transform.position - transform.position;
             
             Vector3 lookDirection = new Vector3 (0f, direction.y, 0f);

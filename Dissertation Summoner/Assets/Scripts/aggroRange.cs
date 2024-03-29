@@ -43,8 +43,20 @@ public class aggroRange : MonoBehaviour
         if (other.gameObject.tag == "BADGUY")
         {
             
+            
             badGuyInRange.Add(other.gameObject);
         }
     }
-    
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "BADGUY")
+        {
+
+
+            badGuyInRange.Remove(other.gameObject);
+        }
+
+    }
+
 }

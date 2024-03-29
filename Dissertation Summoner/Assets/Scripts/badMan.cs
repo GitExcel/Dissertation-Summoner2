@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class badMan : MonoBehaviour
 {
+    public float health = 100;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +14,10 @@ public class badMan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (health <= 0)
+        {
+           Destroy(gameObject);
+        }
         
     }
     private void OnTriggerEnter(Collider other)
@@ -20,7 +25,7 @@ public class badMan : MonoBehaviour
         if (other.tag == "Summon")
         {
             
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
         }
     }
 }
