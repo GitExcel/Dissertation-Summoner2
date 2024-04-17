@@ -2,21 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.UI;
 using UnityEngine;
 
 public class skillTree : MonoBehaviour
 {
-    private int skillPoints = 2;
+    private int skillPoints = 3;
     private int skillPointsSpent = 0;
     public GameObject skillpointtext;
     public GameObject summon;
     public List<GameObject> tier1Buttons = new List<GameObject>();
     public List<GameObject> tier2Buttons = new List<GameObject>();
+    public List<GameObject> tier3Buttons = new List<GameObject>();
     private bool tier1Bought = false;
     private bool tier2Bought = false;
+    private bool tier3Bought = false;
     public GameObject player;
     private int extraSummons = 0;
     private int extraDmg;
+    private int extraSpeed;
+    private float extraAttackSpeed;
+    public GameObject summonpoint;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +31,12 @@ public class skillTree : MonoBehaviour
     }
     private void Awake()
     {
+        
         foreach (GameObject i in tier2Buttons)
+        {
+            i.SetActive(false);
+        }
+        foreach (GameObject i in tier3Buttons)
         {
             i.SetActive(false);
         }
@@ -53,10 +65,8 @@ public class skillTree : MonoBehaviour
                 {
                     i.SetActive(true);
                 }
-                var extraSum =Instantiate(summon, summon.transform.position, summon.transform.rotation);
-                extraSum.GetComponent<Summon>().inZone = false;
-                extraSum.GetComponent<Summon>().damage += extraDmg;
-                extraSummons++;
+                createSummon();
+                
                 skillPoints--;
                 skillPointsSpent++;
                 print("skill point spent");
@@ -109,10 +119,12 @@ public class skillTree : MonoBehaviour
                 {
                     i.SetActive(false);
                 }
-                var extraSum = Instantiate(summon, summon.transform.position, summon.transform.rotation);
-                extraSum.GetComponent<Summon>().inZone = false;
-                extraSum.GetComponent<Summon>().damage += extraDmg;
-                extraSummons++;
+                foreach (GameObject i in tier3Buttons)
+                {
+                    i.SetActive(true);
+                }
+                createSummon();
+              
                 skillPoints--;
                 skillPointsSpent++;
                 print("skill point spent");
@@ -123,6 +135,102 @@ public class skillTree : MonoBehaviour
 
     }
 
+    public void Tier2Second() //SUMMONS GO FASTER
+    {
+        if (skillPoints >= 1)
+        {
+            if (!tier2Bought)
+            {
+                
+                foreach (GameObject i in tier2Buttons)
+                {
+                    i.SetActive(false);
+                }
+
+                foreach (GameObject i in tier3Buttons)
+                {
+                    i.SetActive(true);
+                }
+                skillPoints--;
+                skillPointsSpent++;
+                print("skill point spent");
+                tier2Bought = true;
+                extraSpeed += 2;
+                foreach (GameObject i in player.GetComponent<playerCommands>().summons)
+                {
+                    i.GetComponent<Summon>().speed += extraSpeed;
+                }
+
+            }
+
+        }
+
+    }
+
+    public void Tier3First() //EXTRA SUMM
+    {
+        if (skillPoints >= 1)
+        {
+            if (!tier3Bought)
+            {
+
+                foreach (GameObject i in tier3Buttons)
+                {
+                    i.SetActive(false);
+                }
+                skillPoints--;
+                skillPointsSpent++;
+                print("skill point spent");
+                tier3Bought = true;
+                createSummon();
+                
+
+            }
+
+        }
+
+    }
+
+    public void Tier3Second() //SUMMONS ATTACK FASTER
+    {
+        if (skillPoints >= 1)
+        {
+            if (!tier3Bought)
+            {
+
+                foreach (GameObject i in tier3Buttons)
+                {
+                    i.SetActive(false);
+                }
+                skillPoints--;
+                skillPointsSpent++;
+                print("skill point spent");
+                tier3Bought = true;
+                extraAttackSpeed += 1.5f;
+                foreach (GameObject i in player.GetComponent<playerCommands>().summons)
+                {
+                    i.GetComponent<Summon>().attackSpeed -= extraAttackSpeed;
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+    private void createSummon()
+    {
+        var extraSum = Instantiate(summon, summonpoint.transform.position, summonpoint.transform.rotation);
+        extraSum.GetComponent<Summon>().inZone = false;
+        extraSum.GetComponent<Summon>().damage += extraDmg;
+        extraSum.GetComponent<Summon>().speed += extraSpeed;
+        extraSum.GetComponent<Summon>().attackSpeed -= extraAttackSpeed;
+        extraSummons++;
+
+    }
+
     public void Reset()
     {
         foreach (GameObject i in player.GetComponent<playerCommands>().summons)
@@ -130,6 +238,7 @@ public class skillTree : MonoBehaviour
             i.gameObject.GetComponent<Summon>().element = i.gameObject.GetComponent<Summon>().baseElement;
             i.gameObject.GetComponent<Summon>().speed = i.gameObject.GetComponent<Summon>().baseSpeed;
             i.gameObject.GetComponent<Summon>().damage = i.gameObject.GetComponent<Summon>().baseDamage;
+            i.gameObject.GetComponent<Summon>().attackSpeed = i.gameObject.GetComponent<Summon>().baseAttackSpeed;
         }
         foreach (GameObject i in tier1Buttons)
         {
@@ -139,7 +248,10 @@ public class skillTree : MonoBehaviour
         skillPointsSpent = 0;
         tier1Bought = false;
         tier2Bought = false;
+        tier3Bought = false;
         extraDmg = 0;
+        extraSpeed = 0;
+        extraAttackSpeed = 0;
         for (int i = extraSummons; i > 0; i--)
         {
             Destroy(player.GetComponent<playerCommands>().summons[player.GetComponent<playerCommands>().summons.Count - 1]);
@@ -149,6 +261,8 @@ public class skillTree : MonoBehaviour
 
 
         }
+
+
         //player.GetComponent<playerCommands>().summons.Clear();
         //var extraSum = Instantiate(summon, summon.transform.position, summon.transform.rotation);
        // extraSum.GetComponent<Summon>().inZone = false;

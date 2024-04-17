@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class playerCommands : MonoBehaviour
@@ -14,6 +15,14 @@ public class playerCommands : MonoBehaviour
     private float dist = 10000;
     public string PassiveAggressive = "AGGRESSIVE";
     public GameObject skillTree;
+    public GameObject passiveAggressiveText;
+    public GameObject playerUi;
+
+    private void Awake()
+    {
+        skillTree.SetActive(false);
+        playerUi.SetActive(true);
+    }
 
     void Update()
     {
@@ -25,10 +34,12 @@ public class playerCommands : MonoBehaviour
             Defend();
         }
         if (Input.GetKeyDown("q")) {
+            passiveAggressiveText.GetComponent<TextMeshProUGUI>().text = "Aggressive";
             PassiveAggressive = "AGGRESSIVE";
             print("aggressive");
         }
         if (Input.GetKeyDown ("e")) {
+            passiveAggressiveText.GetComponent<TextMeshProUGUI>().text = "Passive";
             PassiveAggressive = "PASSIVE";
             print("passive");
             foreach (GameObject gameObject in summons)
@@ -40,13 +51,19 @@ public class playerCommands : MonoBehaviour
         {
             if (Cursor.lockState == CursorLockMode.None)
             {
+                
                 Cursor.lockState = CursorLockMode.Locked;
+                print("deactive");
                 skillTree.SetActive(false);
+                playerUi.SetActive(true);
             }
             else
             {
+                
                 Cursor.lockState = CursorLockMode.None;
+                print("active");
                 skillTree.SetActive(true);
+                playerUi.SetActive(false);
 
             }
 

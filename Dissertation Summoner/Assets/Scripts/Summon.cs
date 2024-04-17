@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor.UI;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
+using UnityEngine.AI;
 
 public class Summon : MonoBehaviour
 {
@@ -30,10 +31,13 @@ public class Summon : MonoBehaviour
     public string element = "NONE";
     public GameObject attackBox;
     private bool attackOnCooldown = false;
+    public float attackSpeed = 3f;
 
     public float baseDamage;
     public float baseSpeed;
     public string baseElement;
+    public float baseAttackSpeed;
+    public NavMeshAgent agent;
 
 
     Animator animator;
@@ -47,10 +51,12 @@ public class Summon : MonoBehaviour
         baseElement = element;
         baseDamage = damage;
         baseSpeed = speed;
+        baseAttackSpeed = attackSpeed;
         
     }
     private void Awake()
     {
+        agent = GetComponent<NavMeshAgent>();
         player = GameObject.Find("PlayerArmature").gameObject;
         lookAtPoint = player.transform.Find("LookatPoint").transform;
         aggroZone = GameObject.Find("aggroCube").gameObject;
@@ -71,7 +77,7 @@ public class Summon : MonoBehaviour
     IEnumerator attackTimer()
     {
         print("it be starting");
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(attackSpeed);
         attackBox.GetComponent<attackBox>().targetIn = false;
         attackOnCooldown = false;
         print("it be done");
@@ -90,10 +96,10 @@ public class Summon : MonoBehaviour
             summonAttack();
         }
 
-        if (c.isGrounded)
-        {
-            playerVelocity.y = 0f;
-        }
+       // if (c.isGrounded)
+       // {
+         //   playerVelocity.y = 0f;
+        //}
 
         if (aggroZone2.gameObject.GetComponent<aggroRange2>().target != null)
         {
@@ -103,7 +109,7 @@ public class Summon : MonoBehaviour
 
 
         playerVelocity.y += gravity * Time.deltaTime;
-        c.Move(playerVelocity);
+        //c.Move(playerVelocity);
         
         
         
@@ -130,8 +136,6 @@ public class Summon : MonoBehaviour
                 print("attacked");
                 animator.SetTrigger("triggerAttack");
                 attackOnCooldown = true;
-                aggroZone2.gameObject.GetComponent<aggroRange2>().target.gameObject.GetComponent<badMan>().health -= damage;
-                print(aggroZone2.gameObject.GetComponent<aggroRange2>().target.gameObject.GetComponent<badMan>().health);
                 StartCoroutine(attackTimer());
 
 
@@ -143,13 +147,21 @@ public class Summon : MonoBehaviour
             {
                 transform.LookAt(new Vector3(aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position.x, transform.position.y, aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position.z));
                 Vector3 direction = aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position - transform.position;
-                c.Move(direction.normalized * (speed * Time.deltaTime));
+                //c.Move(direction.normalized * (speed * Time.deltaTime));
+                agent.SetDestination(aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position);
 
             }
             
 
         }
         
+    }
+
+    public void EndAttack()
+    {
+        print("attack ended");
+        aggroZone2.gameObject.GetComponent<aggroRange2>().target.gameObject.GetComponent<badMan>().health -= damage;
+        print(aggroZone2.gameObject.GetComponent<aggroRange2>().target.gameObject.GetComponent<badMan>().health);
     }
 
     private void summonFollow()
@@ -171,7 +183,8 @@ public class Summon : MonoBehaviour
             
             Vector3 lookDirection = new Vector3 (0f, direction.y, 0f);
             transform.LookAt(new Vector3(point.transform.position.x, transform.position.y, point.transform.position.z));
-            c.Move(direction.normalized * (speed * Time.deltaTime));
+            agent.SetDestination(point.transform.position);
+            //c.Move(direction.normalized * (speed * Time.deltaTime));
             
             
 
