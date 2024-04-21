@@ -16,7 +16,7 @@ public class aggroRange : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void Update() //this script is used by the defend command, gets all enemies close to the player then outs them in a list
     {
         foreach (GameObject obj in badGuyInRange)
         {
@@ -38,7 +38,7 @@ public class aggroRange : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other) //if a badguy enters add it to the list
     {
         if (other.gameObject.tag == "BADGUY")
         {
@@ -48,7 +48,7 @@ public class aggroRange : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other) //if a bad guy leaves remove from list
     {
         if (other.gameObject.tag == "BADGUY")
         {

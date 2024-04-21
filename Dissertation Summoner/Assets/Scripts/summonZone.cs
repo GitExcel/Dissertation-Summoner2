@@ -18,11 +18,15 @@ public class summonZone : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+
+       
         if (other.gameObject.tag =="Summon")
         {
             
+            
             if (pointNum == other.gameObject.GetComponent<Summon>().pointNum)
             {
+                
                 
                 other.gameObject.GetComponent<Summon>().inZone = true;
             }

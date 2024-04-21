@@ -8,6 +8,7 @@ TagManager:
   - Summon
   - BadGuy
   - BADGUY
+  - SkillPointStorage
   layers:
   - Default
   - TransparentFX
