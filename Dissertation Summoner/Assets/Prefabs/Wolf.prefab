@@ -804,7 +804,7 @@ MonoBehaviour:
   playerZone: {fileID: 0}
   inZone: 0
   player: {fileID: 0}
-  speed: 4
+  speed: 5
   facing: {fileID: 0}
   lookAtPoint: {fileID: 0}
   point: {fileID: 0}

@@ -98,6 +98,7 @@ public class Summon : MonoBehaviour
     // Update is called once per frame
     void Update() //behaviour, follow or attack
     {
+        agent.speed = speed;
           
         if (behaviourMode == "FOLLOW")
         {
@@ -219,7 +220,8 @@ public class Summon : MonoBehaviour
 
     private void rangedAttack() //if they enemy is in clear view, done by a raycast, then instantiate a bullet that flies at the enemy
     {
-        ray = Camera.main.ScreenPointToRay(aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position);
+        ray = Camera.main.ScreenPointToRay(new Vector3(aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position.x,
+            aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position.y + 1.8f, aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position.z));
         Vector3 rayDir = aggroZone2.gameObject.GetComponent<aggroRange2>().target.transform.position - transform.position;
         
         if (Physics.Raycast(transform.position, rayDir, out hit))

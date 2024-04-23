@@ -27,7 +27,7 @@ public class summonBullet : MonoBehaviour
         if (target != null)
         {
             var dir = (target.transform.position - transform.position).normalized;
-            transform.position = Vector3.MoveTowards(transform.position, target.transform.position, speed);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x, target.transform.position.y + 1.8f, target.transform.position.z) , speed);
         }
         else
         {

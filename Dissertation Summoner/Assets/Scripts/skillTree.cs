@@ -167,7 +167,7 @@ public class skillTree : MonoBehaviour
                 skillPointsSpent++;
                 print("skill point spent");
                 tier2Bought = true;
-                extraSpeed += 2;
+                extraSpeed += 3;
                 foreach (GameObject i in player.GetComponent<playerCommands>().summons)
                 {
                     i.GetComponent<Summon>().speed += extraSpeed;
