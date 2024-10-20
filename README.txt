@@ -1,5 +1,7 @@
 This was made as a demo of a summoner class to be used in a wider class based game based on my research conducted
 
+Video demo can be found here: https://youtu.be/IlCz4tUYtmc?si=gzinxx-6GU5j4Y44
+
 The assets in the "3rd Party Assets Used" folder are not made by me. Everything else is made by me.
 The skeleton animations and model are not made by me, however the scripted bahvious on it is.
 
